@@ -14,7 +14,8 @@ export default function ImageCarousel({imagesUrl} : ImagesUrlProps): JSX.Element
             src={url.url}
             alt={`Slide ${index}`}
             key={index}
-            className="carouselItem"
+            className="carouselItem img-fluid img-thumbnail d-flex justify-content-center"
+            style={{ maxHeight: '70vh', maxWidth: '100%' }}
             onDragStart={handleDragStart}
         />
     ));
@@ -23,9 +24,7 @@ export default function ImageCarousel({imagesUrl} : ImagesUrlProps): JSX.Element
         <AliceCarousel
             mouseTracking
             items={items}
-            infinite
-            autoPlay
-            autoPlayInterval={2000}
+            className="d-flex justify-content-center"
         />
     );
 }

@@ -75,48 +75,51 @@ export function MoviesList() {
         setLimit(parseInt(e.target.value, 10));
     }
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error instanceof Error ? error.message : "An error occurred"}</div>;
+    if (loading) return <div className="alert alert-info">Loading...</div>;
+    if (error) return <div className="alert alert-danger">Error: {error instanceof Error ? error.message :
+        "An error occurred"}</div>;
 
     const moviesToShow = searchQuery ? searchResults : movies;
 
     return (
         <>
-            <h1>Movies</h1>
-            <input
-                type="text"
-                placeholder="Search movies..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-            />
-            <select value={limit} onChange={handleChangeNumber}>
-                {Array.from({ length: 250 }, (_, index) => (
-                    <option key={index} value={index + 1}>
-                        {index + 1}
-                    </option>
-                ))}
-            </select>
-            <ul>
+            <h1 className="text-center">Movies</h1>
+            <div className="input-group mb-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search movies..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+                <select className="custom-select" value={limit} onChange={handleChangeNumber}>
+                    {Array.from({ length: 250 }, (_, index) => (
+                        <option key={index} value={index + 1}>
+                            {index + 1}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="list-group">
                 {moviesToShow.map((movie: MovieProps) => {
                     if (movie.id) {
                         return (
-                            <div key={movie.id}>
-                                <Link to={`${AppRoute.Movie.replace(':id', movie.id.toString())}`}>
-                                    {movie.name ? movie.name : movie.alternativeName}
-                                </Link>
-                            </div>
+                            <Link key={movie.id} className="list-group-item list-group-item-action"
+                                  to={`${AppRoute.Movie.replace(':id', movie.id.toString())}`}>
+                                {movie.name ? movie.name : movie.alternativeName}
+                            </Link>
                         );
                     }
                     return null;
                 })}
-            </ul>
-            <button onClick={onClickRandomMovie} disabled={isRandomLoading}>
-                {isRandomLoading ? 'Loading...' : 'Choose a Random Movie'}
-            </button>
+            </div>
             {numberOfPages > 1 && (
                 <Pagination onPageChange={(page: number) => setCurrentPage(page)}
                             currentPage={currentPage} totalPages={numberOfPages} />
             )}
+            <button className="btn btn-primary mt-3" onClick={onClickRandomMovie} disabled={isRandomLoading}>
+                {isRandomLoading ? 'Loading...' : 'Choose a Random Movie'}
+            </button>
         </>
     );
 }

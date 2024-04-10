@@ -19,7 +19,7 @@ type Rating = {
     await: number;
 }
 
-type Votes = {
+export type Votes = {
     kp: number;
     imdb: number;
     tmdb: number;

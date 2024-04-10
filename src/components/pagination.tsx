@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { PaginationProps } from '../types/types';
 
 export function Pagination({ totalPages, currentPage, onPageChange }: PaginationProps): JSX.Element {
@@ -6,13 +6,15 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
         const pages = [];
 
         pages.push(
-            <button key="page_1" onClick={() => onPageChange(1)} disabled={currentPage === 1}>
-                1
-            </button>
+            <li className={`page-item ${currentPage === 1 ? 'active' : ''}`} key="page_1">
+                <button className="page-link" onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+                    1
+                </button>
+            </li>
         );
 
         if (currentPage > 3) {
-            pages.push(<span key="dots_left">...</span>);
+            pages.push(<li className="page-item disabled" key="dots_left"><span className="page-link">...</span></li>);
         }
 
         const pageNumbers = [];
@@ -22,21 +24,27 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
 
         pageNumbers.forEach((number) => {
             pages.push(
-                <button key={`page_${number}`} onClick={() => onPageChange(number)} disabled={currentPage === number}>
-                    {number}
-                </button>
+                <li className={`page-item ${currentPage === number ? 'active' : ''}`} key={`page_${number}`}>
+                    <button className="page-link" onClick={() => onPageChange(number)}
+                            disabled={currentPage === number}>
+                        {number}
+                    </button>
+                </li>
             );
         });
 
         if (currentPage < totalPages - 2) {
-            pages.push(<span key="dots_right">...</span>);
+            pages.push(<li className="page-item disabled" key="dots_right"><span className="page-link">...</span></li>);
         }
 
         if (totalPages > 1) {
             pages.push(
-                <button key={`page_${totalPages}`} onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>
-                    {totalPages}
-                </button>
+                <li className={`page-item ${currentPage === totalPages ? 'active' : ''}`} key={`page_${totalPages}`}>
+                    <button className="page-link" onClick={() => onPageChange(totalPages)}
+                            disabled={currentPage === totalPages}>
+                        {totalPages}
+                    </button>
+                </li>
             );
         }
 
@@ -44,14 +52,22 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
     };
 
     return (
-        <div>
-            <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage <= 1}>
-                Previous
-            </button>
-            {renderPageNumbers()}
-            <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= totalPages}>
-                Next
-            </button>
-        </div>
+        <nav aria-label="Page navigation" className="mt-3">
+            <ul className="pagination">
+                <li className="page-item">
+                    <button className="page-link" onClick={() => onPageChange(currentPage - 1)}
+                            disabled={currentPage <= 1}>
+                        Previous
+                    </button>
+                </li>
+                {renderPageNumbers()}
+                <li className="page-item">
+                    <button className="page-link" onClick={() => onPageChange(currentPage + 1)}
+                            disabled={currentPage >= totalPages}>
+                        Next
+                    </button>
+                </li>
+            </ul>
+        </nav>
     );
 }
