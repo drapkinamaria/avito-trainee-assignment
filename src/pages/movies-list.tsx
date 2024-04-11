@@ -75,15 +75,15 @@ export function MoviesList() {
         setLimit(parseInt(e.target.value, 10));
     }
 
-    if (loading) return <div className="alert alert-info">Loading...</div>;
-    if (error) return <div className="alert alert-danger">Error: {error instanceof Error ? error.message :
-        "An error occurred"}</div>;
+    if (loading) return <div className="alert alert-info">Загрузка...</div>;
+    if (error) return <div className="alert alert-danger">Ошибка: {error instanceof Error ? error.message :
+        "Произошла ошибка"}</div>;
 
     const moviesToShow = searchQuery ? searchResults : movies;
 
     return (
-        <>
-            <h1 className="text-center">Movies</h1>
+        <div className="container mt-3">
+            <h1 className="text-center">Список фильмов</h1>
             <div className="input-group mb-3">
                 <input
                     type="text"
@@ -118,8 +118,8 @@ export function MoviesList() {
                             currentPage={currentPage} totalPages={numberOfPages} />
             )}
             <button className="btn btn-primary mt-3" onClick={onClickRandomMovie} disabled={isRandomLoading}>
-                {isRandomLoading ? 'Loading...' : 'Choose a Random Movie'}
+                {isRandomLoading ? 'Загрузка...' : 'Выбери рандомный фильм'}
             </button>
-        </>
+        </div>
     );
 }

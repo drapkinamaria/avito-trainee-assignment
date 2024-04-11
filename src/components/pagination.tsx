@@ -57,14 +57,14 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
                 <li className="page-item">
                     <button className="page-link" onClick={() => onPageChange(currentPage - 1)}
                             disabled={currentPage <= 1}>
-                        Previous
+                        Назад
                     </button>
                 </li>
                 {renderPageNumbers()}
                 <li className="page-item">
                     <button className="page-link" onClick={() => onPageChange(currentPage + 1)}
                             disabled={currentPage >= totalPages}>
-                        Next
+                        Вперед
                     </button>
                 </li>
             </ul>

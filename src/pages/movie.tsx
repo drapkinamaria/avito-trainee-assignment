@@ -6,9 +6,11 @@ import { MovieProps } from '../types/movie-type';
 import { AppRoute } from '../const';
 import ImageCarousel from "../components/image-carousel";
 import { Pagination } from "../components/pagination";
+import {EpisodesList} from "../components/episodes-list";
+import {ReviewsList} from "../components/reviews-list";
 
 export const Movie = () => {
-    const { id } = useParams<{ id?: string }>();
+    const { id } = useParams<{ id: string }>();
     const [movie, setMovie] = useState<MovieProps | undefined>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ export const Movie = () => {
             };
             fetchMovie();
         }
-    }, [id]);
+    }, [error, id]);
 
     if (loading) return <div className="alert alert-info">Loading...</div>;
     if (error) return <div className="alert alert-danger">{error}</div>;
@@ -42,13 +44,18 @@ export const Movie = () => {
     const currentActors = movie.persons.slice(indexOfFirstActor, indexOfLastActor);
     const paginate = (pageNumber: number) => setCurrentActorPage(pageNumber);
 
+    const similarMoviesPosters = movie.similarMovies.map(similarMovie => ({
+        imageUrl: similarMovie.poster.url,
+        id: similarMovie.id,
+    }));
+
     return (
         <div className="container mt-3">
             <Link to={AppRoute.Root} className="btn btn-primary mb-3">Назад</Link>
             <h1>{movie.name}</h1>
             <p>{movie.shortDescription}</p>
-            <div>Rating: <span className="badge badge-success">{movie.rating.imdb}</span></div>
-            <h3>Actors</h3>
+            <div>Оценка: {movie.rating.imdb}</div>
+            <h3>Список актеров</h3>
             <div>
                 {movie.persons && movie.persons.length > 0 ? (
                     <ul className="list-group">
@@ -57,7 +64,7 @@ export const Movie = () => {
                         ))}
                     </ul>
                 ) : (
-                    <div className="alert alert-secondary">No information about actors.</div>
+                    <div className="alert alert-secondary">Нет информации о актерах</div>
                 )}
             </div>
             {movie.persons && movie.persons.length > 10 && (
@@ -67,23 +74,14 @@ export const Movie = () => {
                     onPageChange={paginate}
                 />
             )}
+            <div>{movie.isSeries ? <EpisodesList movieId={id}></EpisodesList> : ''}</div>
+            <ReviewsList movieId={id}></ReviewsList>
             <img src={movie.poster.url} alt={movie.name} className="img-fluid my-3"></img>
-            <ImageCarousel imagesUrl={movie.similarMovies.map((mov => mov.poster))}></ImageCarousel>
             <div className="mt-3">
-                <h3>Similar Movies</h3>
-                {movie.similarMovies.length > 0 ? (
-                    <div className="row">
-                        {movie.similarMovies.map((similarMovie) => (
-                            <div key={similarMovie.id} className="col-md-4 mb-3">
-                                <Link to={`${AppRoute.Movie.replace(':id', similarMovie.id.toString())}`}>
-                                    <div>{similarMovie.name}</div>
-                                    <img src={similarMovie.poster.url} alt={similarMovie.name} className="img-fluid" />
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
+                {similarMoviesPosters.length > 0 ? (
+                    <ImageCarousel imagesUrlId={similarMoviesPosters} />
                 ) : (
-                    <div className="alert alert-secondary">No information about similar movies.</div>
+                    <div className="alert alert-secondary">Нет информации о похожих фильмах</div>
                 )}
             </div>
         </div>
