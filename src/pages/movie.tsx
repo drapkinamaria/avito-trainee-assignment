@@ -74,7 +74,7 @@ export const Movie = () => {
                     onPageChange={paginate}
                 />
             )}
-            <div>{movie.isSeries ? <EpisodesList movieId={id}></EpisodesList> : ''}</div>
+            <div>{movie.isSeries ? <EpisodesList movieId={id} /> : ''}</div>
             <ReviewsList movieId={id}></ReviewsList>
             <img src={movie.poster.url} alt={movie.name} className="img-fluid my-3"></img>
             <div className="mt-3">

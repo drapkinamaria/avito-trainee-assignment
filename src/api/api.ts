@@ -2,7 +2,7 @@ import axios, {AxiosResponse, AxiosRequestConfig} from 'axios'
 import {token} from './token'
 import {MoviePage, MovieProps} from '../types/movie-type';
 import {EpisodesListProps} from "../types/episodes-types";
-import {ReviewsResponse} from "../types/types";
+import {Country, Genre, ReviewsResponse} from "../types/types";
 
 export const BASE_URL = 'https://api.kinopoisk.dev/v1.4'
 const MAX_RETRIES = 3;
@@ -80,11 +80,11 @@ export const getRandomMovie: () => Promise<AxiosResponse<MovieProps, unknown>> =
 export const getStudios: () => Promise<AxiosResponse<unknown, unknown>> = () =>
     api.get<unknown>(`/studio`)
 
-export const getGenres: () => Promise<AxiosResponse<unknown, unknown>> = () =>
-    apiV1.get<unknown>(`/movie/possible-values-by-field?field=genres.name`)
+export const getGenres: () => Promise<AxiosResponse<Genre[], unknown>> = () =>
+    apiV1.get<Genre[]>(`/movie/possible-values-by-field?field=genres.name`)
 
-export const getCountries: () => Promise<AxiosResponse<unknown, unknown>> = () =>
-    apiV1.get<unknown>(`/movie/possible-values-by-field?field=countries.name`)
+export const getCountries: () => Promise<AxiosResponse<Country[], unknown>> = () =>
+    apiV1.get<Country[]>(`/movie/possible-values-by-field?field=countries.name`)
 
 export const getSeasons: (pageNumber: string, limit: string, movieId: string) =>
     Promise<AxiosResponse<EpisodesListProps, unknown>> = (pageNumber: string, limit: string, movieId: string) =>

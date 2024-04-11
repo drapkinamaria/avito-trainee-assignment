@@ -2,7 +2,7 @@
   "name": "avito-trainee-assignment",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.tsx",
   "scripts": {
     "start": "webpack serve --mode development --open",
     "build": "webpack --mode production"
@@ -13,8 +13,10 @@
   "dependencies": {
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
+    "history": "^5.3.0",
     "react": "^18.2.0",
     "react-alice-carousel": "^2.9.1",
+    "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3"
   },

@@ -40,3 +40,13 @@ export type ReviewsResponse = {
     pages: number;
 };
 
+export type Genre = {
+    name: string,
+    slug: string
+}
+
+export type Country = {
+    name: string,
+    slug: string
+}
+

@@ -1,9 +1,10 @@
 import React, { ChangeEvent, useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {Link, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import { getMoviesByName, getMovies, getRandomMovie } from '../api/api';
 import { MovieProps } from '../types/movie-type';
 import { AppRoute } from '../const';
 import { Pagination } from "../components/pagination";
+import {SearchBar} from "../components/search-bar";
 
 export function MoviesList() {
     const [movies, setMovies] = useState<MovieProps[]>([]);
@@ -53,6 +54,22 @@ export function MoviesList() {
         fetchMovies(currentPage, limit);
     }, [currentPage, limit, searchQuery]);
 
+    const [searchParams, setSearchParams] = useSearchParams();
+    const location = useLocation();
+
+    useEffect(() => {
+        const pageParam = searchParams.get('page');
+        const limitParam = searchParams.get('limit');
+
+        if (pageParam) setCurrentPage(parseInt(pageParam, 10));
+        if (limitParam) setLimit(parseInt(limitParam, 10));
+    }, [searchParams]);
+
+    useEffect(() => {
+        fetchMovies(currentPage, limit);
+        setSearchParams({ page: currentPage.toString(), limit: limit.toString() });
+    }, [currentPage, limit, searchQuery]);
+
     function handleSearchChange(e: ChangeEvent<HTMLInputElement>) {
         setSearchQuery(e.target.value);
         fetchMoviesByName(e.target.value);
@@ -83,6 +100,7 @@ export function MoviesList() {
 
     return (
         <div className="container mt-3">
+            <SearchBar />
             <h1 className="text-center">Список фильмов</h1>
             <div className="input-group mb-3">
                 <input
