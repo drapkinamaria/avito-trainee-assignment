@@ -1,9 +1,8 @@
-import axios, {AxiosResponse, AxiosRequestConfig} from 'axios'
+import axios, {AxiosResponse} from 'axios'
 import {token} from './token'
 import {MoviePage, MovieProps} from '../types/movie-type';
 import {EpisodesListProps} from "../types/episodes-types";
 import {Country, Genre, ReviewsResponse} from "../types/types";
-import {debounce} from "lodash";
 
 export const BASE_URL = 'https://api.kinopoisk.dev/v1.4'
 const MAX_RETRIES = 3;
@@ -74,12 +73,6 @@ export const getMovieById: (id: string) => Promise<AxiosResponse<MovieProps, unk
 export const getMoviesByName: (pageNumber: string, limit: string, name: string) =>
     Promise<AxiosResponse<MoviePage, unknown>> = (pageNumber: string, limit: string, name: string) =>
     api.get<MoviePage>(`/movie/search?page=${pageNumber}&limit=${limit}&query=${name}`)
-
-//export const getMoviesByName = debounce(
-    //(pageNumber: string, limit: string, name: string) =>
-        //api.get<MoviePage>(`/movie/search?page=${pageNumber}&limit=${limit}&query=${name}`),
-    //1000
-//);
 
 export const getRandomMovie: () => Promise<AxiosResponse<MovieProps, unknown>> = () =>
     api.get<MovieProps>(`/movie/random`)

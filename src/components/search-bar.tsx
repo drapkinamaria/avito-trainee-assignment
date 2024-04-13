@@ -1,52 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { getGenres, getCountries } from '../api/api';
-import {Country, Genre} from "../types/types";
+import React from 'react';
+import { SearchBarProps } from "../types/types";
 import {ageRating} from "../const";
 
-export function SearchBar(): JSX.Element {
-    const [genres, setGenres] = useState<Genre[]>([]);
-    const [countries, setCountries] = useState<Country[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
-
-    useEffect(() => {
-        const fetchGenres = async () => {
-            try {
-                const genresResponse = await getGenres();
-                setGenres(genresResponse.data);
-            } catch (err) {
-                setError(err as Error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        const fetchCountries = async () => {
-            try {
-                const countriesResponse = await getCountries();
-                setCountries(countriesResponse.data);
-            } catch (err) {
-                setError(err as Error);
-            }
-        };
-
-        fetchGenres();
-        fetchCountries();
-    }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    }
-
+export function SearchBar({searchQuery, onSearchChange, onLimitChange, limit, genres, countries, onAgeChange,
+                              selectedAge, selectedGenre, onGenreChange, selectedCountry, onCountryChange}:
+                              SearchBarProps): JSX.Element {
     return (
         <div className="container my-3">
+            <div className="input-group mb-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search movies..."
+                    value={searchQuery}
+                    onChange={onSearchChange}
+                />
+                <select className="custom-select" value={limit.toString()} onChange={onLimitChange}>
+                    <option value="">Select limit...</option>
+                    {Array.from({ length: 250 }, (_, index) => (
+                        <option key={index} value={index + 1}>
+                            {index + 1}
+                        </option>
+                    ))}
+                </select>
+            </div>
             <div className="mb-3">
                 <label htmlFor="genre-select" className="form-label">Выбери жанр:</label>
-                <select id="genre-select" name="genres" className="form-select">
+                <select id="genre-select" className="form-select" value={selectedGenre || ''}
+                        onChange={(e) => onGenreChange(e)}>
+                    <option value="">Select genre...</option>
                     {genres.map((genre) => (
                         <option key={genre.name} value={genre.name}>
                             {genre.name}
@@ -56,7 +38,9 @@ export function SearchBar(): JSX.Element {
             </div>
             <div className="mb-3">
                 <label htmlFor="country-select" className="form-label">Выбери страну:</label>
-                <select id="country-select" name="countries" className="form-select">
+                <select id="country-select" className="form-select" value={selectedCountry || ''}
+                        onChange={(e) => onCountryChange(e)}>
+                    <option value="">Select country...</option>
                     {countries.map((country) => (
                         <option key={country.name} value={country.name}>
                             {country.name}
@@ -66,8 +50,10 @@ export function SearchBar(): JSX.Element {
             </div>
             <div className="mb-3">
                 <label htmlFor="age-select" className="form-label">Выбери возрастной рейтинг:</label>
-                <select id="age-select" name="ages" className="form-select">
-                    {ageRating.map((age) => (
+                <select id="age-select" className="form-select" value={selectedAge || ''}
+                        onChange={(e) => onAgeChange(e)}>
+                    <option value="">Select age rating...</option>
+                    {ageRating.map(age => (
                         <option key={age} value={age}>
                             {age}
                         </option>

@@ -1,4 +1,5 @@
 import {AuthorizationStatus} from '../const';
+import {ChangeEvent} from "react";
 
 export type ImagesUrlProps = {
     imageUrl: string,
@@ -53,4 +54,15 @@ export type Country = {
 export type RandomMovieButtonProps = {
     onClick: () => void;
     isLoading: boolean;
+}
+
+export type SearchBarProps = {
+    searchQuery: string;
+    onSearchChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    onLimitChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+    limit: number;
+    genres: Genre[];
+    countries: Country[];
+    onAgeChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+    selectedAge: string[];
 }

@@ -10,4 +10,4 @@ export enum AuthorizationStatus {
     Unknown = 'UNKNOWN'
 }
 
-export const ageRating = ['0', '6', '12', '18']
+export const ageRating: string[] = ['0', '6', '12', '18']
