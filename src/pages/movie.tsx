@@ -26,7 +26,6 @@ export const Movie = () => {
                     setLoading(true);
                     const response = await getMovieById(id);
                     setMovie(response.data);
-                    console.log(response.data.rating.imdb)
                 } catch (err) {
                     setError("Error fetching movie");
                 } finally {

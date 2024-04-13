@@ -50,3 +50,7 @@ export type Country = {
     slug: string
 }
 
+export type RandomMovieButtonProps = {
+    onClick: () => void;
+    isLoading: boolean;
+}

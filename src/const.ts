@@ -9,3 +9,5 @@ export enum AuthorizationStatus {
     NoAuth = 'NO_AUTH',
     Unknown = 'UNKNOWN'
 }
+
+export const ageRating = ['0', '6', '12', '18']

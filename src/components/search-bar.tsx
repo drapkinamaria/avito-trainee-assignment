@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getGenres, getCountries } from '../api/api';
 import {Country, Genre} from "../types/types";
+import {ageRating} from "../const";
 
 export function SearchBar(): JSX.Element {
     const [genres, setGenres] = useState<Genre[]>([]);
@@ -59,6 +60,16 @@ export function SearchBar(): JSX.Element {
                     {countries.map((country) => (
                         <option key={country.name} value={country.name}>
                             {country.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="mb-3">
+                <label htmlFor="age-select" className="form-label">Выбери возрастной рейтинг:</label>
+                <select id="age-select" name="ages" className="form-select">
+                    {ageRating.map((age) => (
+                        <option key={age} value={age}>
+                            {age}
                         </option>
                     ))}
                 </select>

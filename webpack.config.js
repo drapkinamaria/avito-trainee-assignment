@@ -8,7 +8,10 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.js', 'css'],
+        alias: {
+            '@': path.resolve(__dirname, './src/'),
+        },
     },
     module: {
         rules: [
@@ -25,7 +28,20 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './index.html',
+            template: 'src/index.html',
         }),
     ],
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'public'),
+        },
+        port: 7070,
+        historyApiFallback: true,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+            'Access-Control-Allow-Headers':
+                'X-Requested-With, content-type, Authorization',
+        },
+    },
 };

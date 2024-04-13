@@ -5,6 +5,7 @@ import { MovieProps } from '../types/movie-type';
 import { AppRoute } from '../const';
 import { Pagination } from "../components/pagination";
 import {SearchBar} from "../components/search-bar";
+import {RandomMovieButton} from "../components/random-movie-button";
 
 export function MoviesList() {
     const [movies, setMovies] = useState<MovieProps[]>([]);
@@ -17,6 +18,10 @@ export function MoviesList() {
     const navigate = useNavigate();
     const [isRandomLoading, setIsRandomLoading] = useState(false);
     const [limit, setLimit] = useState<number>(10);
+    const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+        const saved = localStorage.getItem('searchHistory');
+        return saved ? JSON.parse(saved) : [];
+    });
 
     async function fetchMovies(page: number, limit: number) {
         if (!searchQuery) {
@@ -38,6 +43,7 @@ export function MoviesList() {
             setLoading(true);
             try {
                 const response = await getMoviesByName(currentPage.toString(), limit.toString(), name);
+                console.log(response)
                 setSearchResults(response.data.docs);
                 setNumberOfPages(response.data.pages);
                 setLoading(false);
@@ -92,6 +98,19 @@ export function MoviesList() {
         setLimit(parseInt(e.target.value, 10));
     }
 
+    function handleSearchChange(e: ChangeEvent<HTMLInputElement>) {
+        const newQuery = e.target.value;
+        setSearchQuery(newQuery);
+        fetchMoviesByName(newQuery);
+
+        const updatedHistory = [newQuery, ...searchHistory.filter(item => item !== newQuery)];
+        if (updatedHistory.length > 20) {
+            updatedHistory.length = 20;
+        }
+        setSearchHistory(updatedHistory);
+        localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+    }
+
     if (loading) return <div className="alert alert-info">Загрузка...</div>;
     if (error) return <div className="alert alert-danger">Ошибка: {error instanceof Error ? error.message :
         "Произошла ошибка"}</div>;
@@ -135,9 +154,7 @@ export function MoviesList() {
                 <Pagination onPageChange={(page: number) => setCurrentPage(page)}
                             currentPage={currentPage} totalPages={numberOfPages} />
             )}
-            <button className="btn btn-primary mt-3" onClick={onClickRandomMovie} disabled={isRandomLoading}>
-                {isRandomLoading ? 'Загрузка...' : 'Выбери рандомный фильм'}
-            </button>
+            <RandomMovieButton onClick={onClickRandomMovie} disabled={isRandomLoading}/>
         </div>
     );
 }
