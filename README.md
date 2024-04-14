@@ -37,7 +37,7 @@ npm start
 Запуск на MacOS/Linux:
 
 ```
-TOKEN=<your api token> npm run
+TOKEN=<your api token> npm start
 ```
 
 ## Примеры запросов:
