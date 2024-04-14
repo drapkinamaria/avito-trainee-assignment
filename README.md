@@ -27,7 +27,7 @@ npm install
 Запуск на Windows:
 
 ```
- $env:TOKEN="WF76VQQ-HQB4P5G-JFJH8DF-CRKDP1M"
+$env:TOKEN=""
 ```
 
 ```
@@ -42,7 +42,7 @@ TOKEN=<your api token> npm run
 
 ## Примеры запросов:
 
-1. Получить данные обо всех фильмах:
+1. Получить список всех фильмов:
 
 ```
   curl --request GET \
@@ -51,7 +51,7 @@ TOKEN=<your api token> npm run
        --header 'accept: application/json'
 ```
 
-2. Получить данные обо всех фильмах с выбранными категориями:
+2. Получить список фильмов с выбранными категориями:
 ```
 curl --request GET \
        --url 'https://api.kinopoisk.dev/v1.4/movie?page=1&limit=10&year=2024&countries.name=США&ageRating=6&genres.name=мультфильм' \
@@ -59,7 +59,7 @@ curl --request GET \
        --header 'accept: application/json'
 ```
 
-3. Получить данные о фильме по id:
+3. Получить фильм по id:
 ```
 curl --request GET \
        --url 'https://api.kinopoisk.dev/v1.4/movie/8124' \
@@ -67,7 +67,7 @@ curl --request GET \
        --header 'accept: application/json'
 ```
 
-4. Получить категории: страны, жанры, типы
+4. Получить список категорий: страны, жанры, типы
 ```
 curl --request GET \
        --url 'https://api.kinopoisk.dev/v1/movie/possible-values-by-field?field=countries.name' \
@@ -89,7 +89,7 @@ curl --request GET \
        --header 'accept: application/json'
 ```
 
-5. Получить данные об отзывах
+5. Получить список отзывов
 
 ```
 curl --request GET \
@@ -116,4 +116,12 @@ curl --request GET \
      --header 'accept: application/json'
 ```
 
+8. Получить список фильмов по названию
+
+```
+curl --request GET \
+     --url 'https://api.kinopoisk.dev/v1.4/movie/search?page=1&limit=10&query=%D0%BE%D1%87' \
+     --header 'X-API-KEY: WF76VQQ-HQB4P5G-JFJH8DF-CRKDP1M' \
+     --header 'accept: application/json'
+```
 

@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useState, useEffect, useCallback} from 'react';
-import {Link, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
+import {Link, Navigate, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {getMoviesByName, getMovies, getGenres, getCountries} from '../api/api';
 import { MovieProps } from '../types/movie-type';
 import { Pagination } from "../components/pagination";
@@ -8,7 +8,8 @@ import {debounce} from "../utils/debounce";
 import {MovieList} from "../components/movie-list";
 import {Country, Genre} from "../types/types";
 import {RandomMovieButton} from "../components/random-movie-button";
-import {AppRoute} from "../const";
+import {AppRoute, AuthorizationStatus} from "../const";
+import {AuthContext, AuthProvider, useAuth} from "../components/auth-context";
 
 export function MoviesList() {
 
@@ -31,6 +32,26 @@ export function MoviesList() {
         const saved = localStorage.getItem('searchHistory');
         return saved ? JSON.parse(saved) : [];
     });
+
+    const { authStatus } = useAuth();
+
+    if (authStatus !== AuthorizationStatus.Auth) {
+        return <Navigate to={AppRoute.Login} replace />;
+    }
+
+    const updateSearchParams = useCallback(() => {
+        const params = {};
+
+        if (selectedGenre) params['genre'] = selectedGenre;
+        if (selectedCountry) params['country'] = selectedCountry;
+        if (selectedAge) params['age'] = selectedAge;
+        if (searchQuery) params['query'] = searchQuery;
+
+        params['page'] = currentPage.toString();
+        params['limit'] = limit.toString();
+
+        setSearchParams(params);
+    }, [currentPage, limit, searchQuery, selectedGenre, selectedCountry, selectedAge, setSearchParams]);
 
     const handleRandomMovieClick = () => {
         navigate(AppRoute.RandomMovie);
@@ -100,8 +121,20 @@ export function MoviesList() {
     }, [searchQuery, debouncedFetchMoviesByName, fetchMovies]);
 
     useEffect(() => {
+        if (searchQuery !== null) {
+            debouncedFetchMoviesByName(searchQuery);
+        }
+    }, [searchQuery, debouncedFetchMoviesByName]);
+
+    useEffect(() => {
+        updateSearchParams();
+    }, [selectedGenre, selectedCountry, selectedAge, searchQuery, updateSearchParams]);
+
+
+    useEffect(() => {
         const newPage = parseInt(searchParams.get('page') || '1', 10);
         const newLimit = parseInt(searchParams.get('limit') || '10', 10);
+        fetchMovies();
         setCurrentPage(newPage);
         setLimit(newLimit);
     }, [searchParams]);

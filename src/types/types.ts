@@ -1,21 +1,29 @@
 import {AuthorizationStatus} from '../const';
-import {ChangeEvent} from "react";
+import React, {ChangeEvent, ReactNode, SetStateAction} from "react";
 import {Studio} from "./studios-types";
+
+export type AuthContextType = {
+    authStatus: AuthorizationStatus;
+    setAuthStatus: React.Dispatch<SetStateAction<AuthorizationStatus>>;
+};
+
+export type PrivateRouteProps = {
+    children: JSX.Element;
+};
 
 export type ImagesUrlProps = {
     imageUrl: string,
     id: number,
 }
 
+export type AuthProviderProps = {
+    children: ReactNode;
+};
+
 export type PaginationProps = {
     totalPages: number;
     currentPage: number;
     onPageChange: (pageNumber: number) => void;
-}
-
-export type PrivateRouteProps = {
-    authorizationStatus: AuthorizationStatus;
-    children: JSX.Element;
 }
 
 export type Review = {

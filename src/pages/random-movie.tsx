@@ -2,7 +2,7 @@ import React, {useState, useEffect, ChangeEvent} from "react";
 import {getContentType, getCountries, getGenres, getRandomMovie, getStudios} from "../api/api";
 import {ContentType, Country, Genre} from "../types/types";
 import {RandomSearchBar} from "../components/random-search-bar";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {AppRoute} from "../const";
 
 export function RandomMovie(): JSX.Element {
@@ -18,7 +18,25 @@ export function RandomMovie(): JSX.Element {
     const [selectedRating, setSelectedRating] = useState("");
     const [error, setError] = useState<Error | null>(null);
     const [id, setId] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    const updateSearchParams = () => {
+        const params = {};
+
+        if (selectedGenre) params['genre'] = selectedGenre;
+        if (selectedCountry) params['country'] = selectedCountry;
+        if (selectedContentType) params['type'] = selectedContentType;
+        if (selectedStudio) params['studio'] = selectedStudio;
+        if (selectedYear) params['year'] = selectedYear;
+        if (selectedRating) params['rating'] = selectedRating;
+
+        setSearchParams(params);
+    };
+
+    useEffect(() => {
+        updateSearchParams();
+    }, [selectedGenre, selectedCountry, selectedContentType, selectedStudio, selectedYear, selectedRating]);
 
     useEffect(() => {
         const fetchFilters = async () => {
