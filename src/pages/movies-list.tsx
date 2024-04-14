@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useState, useEffect, useCallback} from 'react';
-import {useLocation, useNavigate, useSearchParams} from 'react-router-dom';
+import {Link, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
 import {getMoviesByName, getMovies, getGenres, getCountries} from '../api/api';
 import { MovieProps } from '../types/movie-type';
 import { Pagination } from "../components/pagination";
@@ -7,6 +7,8 @@ import {SearchBar} from "../components/search-bar";
 import {debounce} from "../utils/debounce";
 import {MovieList} from "../components/movie-list";
 import {Country, Genre} from "../types/types";
+import {RandomMovieButton} from "../components/random-movie-button";
+import {AppRoute} from "../const";
 
 export function MoviesList() {
 
@@ -30,6 +32,10 @@ export function MoviesList() {
         return saved ? JSON.parse(saved) : [];
     });
 
+    const handleRandomMovieClick = () => {
+        navigate(AppRoute.RandomMovie);
+    };
+
     useEffect(() => {
         const fetchFilters = async () => {
             try {
@@ -38,9 +44,7 @@ export function MoviesList() {
                     getCountries()
                 ]);
                 setGenres(genresResponse.data);
-                setSelectedGenre(genresResponse.data[0]?.name || '');
                 setCountries(countriesResponse.data);
-                setSelectedCountry(countriesResponse.data[0]?.name || '');
             } catch (err) {
                 setError(err as Error);
             } finally {
@@ -51,10 +55,16 @@ export function MoviesList() {
         fetchFilters();
     }, []);
 
-    const fetchMovies = useCallback(async (page: number, limit: number) => {
+    const fetchMovies = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await getMovies(page.toString(), limit.toString());
+            const response = await getMovies(
+                currentPage.toString(),
+                limit.toString(),
+                selectedAge,
+                selectedGenre,
+                selectedCountry
+            );
             setMovies(response.data.docs);
             setNumberOfPages(response.data.pages);
         } catch (err) {
@@ -62,7 +72,7 @@ export function MoviesList() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [currentPage, limit, selectedAge, selectedGenre, selectedCountry]);
 
     const debouncedFetchMoviesByName = useCallback(debounce(async (name: string) => {
         if (name) {
@@ -85,9 +95,9 @@ export function MoviesList() {
         if (searchQuery) {
             debouncedFetchMoviesByName(searchQuery);
         } else {
-            fetchMovies(currentPage, limit);
+            fetchMovies();
         }
-    }, [searchQuery, currentPage, limit, debouncedFetchMoviesByName, fetchMovies]);
+    }, [searchQuery, debouncedFetchMoviesByName, fetchMovies]);
 
     useEffect(() => {
         const newPage = parseInt(searchParams.get('page') || '1', 10);
@@ -100,6 +110,12 @@ export function MoviesList() {
         const newQuery = e.target.value;
         setSearchQuery(newQuery);
 
+        if (newQuery !== '') {
+            setSelectedGenre('');
+            setSelectedCountry('');
+            setSelectedAge('');
+        }
+
         const updatedHistory = [newQuery, ...searchHistory.filter(item => item !== newQuery)];
         if (updatedHistory.length > 20) {
             updatedHistory.length = 20;
@@ -110,14 +126,20 @@ export function MoviesList() {
 
     const handleGenreChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelectedGenre(e.target.value);
+        setSearchQuery('');
+        fetchMovies();
     };
 
     const handleCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelectedCountry(e.target.value);
+        setSearchQuery('');
+        fetchMovies();
     };
 
     const handleAgeChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelectedAge(e.target.value);
+        setSearchQuery('');
+        fetchMovies();
     };
 
     const handleChangeNumber = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -154,6 +176,12 @@ export function MoviesList() {
                 <Pagination onPageChange={(page: number) => setCurrentPage(page)}
                             currentPage={currentPage} totalPages={numberOfPages} />
             )}
+            {numberOfPages === 0 && (
+                <div className="alert alert-warning" role="alert">Фильмы не найдены</div>
+            )}
+            <Link to={AppRoute.RandomMovie}>
+                <RandomMovieButton onClick={handleRandomMovieClick} isLoading={false}/>
+            </Link>
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import {AuthorizationStatus} from '../const';
 import {ChangeEvent} from "react";
+import {Studio} from "./studios-types";
 
 export type ImagesUrlProps = {
     imageUrl: string,
@@ -51,6 +52,11 @@ export type Country = {
     slug: string
 }
 
+export type ContentType = {
+    name: string,
+    slug: string
+}
+
 export type RandomMovieButtonProps = {
     onClick: () => void;
     isLoading: boolean;
@@ -64,5 +70,23 @@ export type SearchBarProps = {
     genres: Genre[];
     countries: Country[];
     onAgeChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-    selectedAge: string[];
+    selectedAge: string;
 }
+
+export type RandomSearchBarProps = {
+    genres: Genre[];
+    countries: Country[];
+    contentTypes: ContentType[];
+    studios: Studio[];
+    onGenreChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onCountryChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onYearChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onNumberChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    onContentTypeChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onStudioChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+    selectedGenre: string;
+    selectedCountry: string;
+    selectedContentType: string;
+    selectedStudio: string;
+}
+

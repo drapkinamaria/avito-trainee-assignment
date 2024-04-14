@@ -58,7 +58,7 @@ export function EpisodesList({ movieId }: { movieId: string }): JSX.Element {
                     </div>
                 ))
             ) : (
-                <div>Эпизоды не найдены</div>
+                <div className="alert alert-warning" role="alert">Эпизоды не найдены</div>
             )}
             {totalPages > 1 && (
                 <Pagination

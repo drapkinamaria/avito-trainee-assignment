@@ -2,7 +2,8 @@ import axios, {AxiosResponse} from 'axios'
 import {token} from './token'
 import {MoviePage, MovieProps} from '../types/movie-type';
 import {EpisodesListProps} from "../types/episodes-types";
-import {Country, Genre, ReviewsResponse} from "../types/types";
+import {ContentType, Country, Genre, ReviewsResponse} from "../types/types";
+import {StudiosProps} from "../types/studios-types";
 
 export const BASE_URL = 'https://api.kinopoisk.dev/v1.4'
 const MAX_RETRIES = 3;
@@ -64,8 +65,26 @@ apiV1.interceptors.response.use(
     }
 );
 
-export const getMovies: (pageNumber: string, limit: string) => Promise<AxiosResponse<MoviePage, unknown>> =
-    (pageNumber: string, limit: string) => api.get<MoviePage>(`/movie?page=${pageNumber}&limit=${limit}`);
+export const getMovies: (
+    pageNumber: string,
+    limit: string,
+    ageRating?: string,
+    genreName?: string,
+    countryName?: string
+) => Promise<AxiosResponse<MoviePage, unknown>> = (
+    pageNumber,
+    limit,
+    ageRating,
+    genreName,
+    countryName
+) => {
+    let query = `/movie?page=${pageNumber}&limit=${limit}`;
+    if (ageRating) query += `&ageRating=${ageRating}`;
+    if (genreName) query += `&genres.name=${encodeURIComponent(genreName)}`;
+    if (countryName) query += `&countries.name=${encodeURIComponent(countryName)}`;
+
+    return api.get<MoviePage>(query);
+};
 
 export const getMovieById: (id: string) => Promise<AxiosResponse<MovieProps, unknown>> = (id: string) =>
     api.get(`/movie/${id}`)
@@ -74,17 +93,56 @@ export const getMoviesByName: (pageNumber: string, limit: string, name: string) 
     Promise<AxiosResponse<MoviePage, unknown>> = (pageNumber: string, limit: string, name: string) =>
     api.get<MoviePage>(`/movie/search?page=${pageNumber}&limit=${limit}&query=${name}`)
 
-export const getRandomMovie: () => Promise<AxiosResponse<MovieProps, unknown>> = () =>
-    api.get<MovieProps>(`/movie/random`)
+export const getRandomMovie: ({
+                                  type,
+                                  year,
+                                  ratingKp,
+                                  genreName,
+                                  countryName,
+                                  networkName
+                              }: {
+    type?: string,
+    year?: string,
+    ratingKp?: string,
+    genreName?: string,
+    countryName?: string,
+    networkName?: string
+}) => Promise<AxiosResponse<MovieProps, unknown>> = ({
+                                                         type,
+                                                         year,
+                                                         ratingKp,
+                                                         genreName,
+                                                         countryName,
+                                                         networkName
+                                                     }) => {
+    let query = '/movie/random?';
+    const params = [
+        type && `type=${encodeURIComponent(type)}`,
+        year && `year=${encodeURIComponent(year)}`,
+        ratingKp && `rating.kp=${encodeURIComponent(ratingKp)}`,
+        genreName && `genres.name=${encodeURIComponent(genreName)}`,
+        countryName && `countries.name=${encodeURIComponent(countryName)}`,
+        networkName && `networks.items.name=${encodeURIComponent(networkName)}`
+    ].filter(Boolean).join('&');
 
-export const getStudios: () => Promise<AxiosResponse<unknown, unknown>> = () =>
-    api.get<unknown>(`/studio`)
+    if (params.length > 0) {
+        query += params;
+    }
+
+    return api.get<MovieProps>(query);
+};
+
+export const getStudios: (pageNumber: string, limit: string) => Promise<AxiosResponse<StudiosProps, unknown>> =
+    (pageNumber: string, limit: string) => api.get<StudiosProps>(`/studio?page=${pageNumber}&limit=${limit}`)
 
 export const getGenres: () => Promise<AxiosResponse<Genre[], unknown>> = () =>
     apiV1.get<Genre[]>(`/movie/possible-values-by-field?field=genres.name`)
 
 export const getCountries: () => Promise<AxiosResponse<Country[], unknown>> = () =>
     apiV1.get<Country[]>(`/movie/possible-values-by-field?field=countries.name`)
+
+export const getContentType: () => Promise<AxiosResponse<ContentType[], unknown>> = () =>
+    apiV1.get<ContentType[]>(`/movie/possible-values-by-field?field=type`)
 
 export const getSeasons: (pageNumber: string, limit: string, movieId: string) =>
     Promise<AxiosResponse<EpisodesListProps, unknown>> = (pageNumber: string, limit: string, movieId: string) =>

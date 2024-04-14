@@ -16,7 +16,6 @@ export function ReviewsList({ movieId }: { movieId: string }): JSX.Element {
             try {
                 setLoading(true);
                 const response = await getReviews(currentPage.toString(), limit.toString(), movieId);
-                console.log(response.data.docs)
                 setReviewsList(response.data.docs);
                 setTotalPages(response.data.pages);
             } catch (err) {

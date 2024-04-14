@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -8,7 +9,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js', 'css'],
+        extensions: ['.tsx', '.ts', '.js', '.css'],
         alias: {
             '@': path.resolve(__dirname, './src/'),
         },
@@ -30,13 +31,16 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'src/index.html',
         }),
+        new webpack.EnvironmentPlugin(['TOKEN']),
     ],
     devServer: {
         static: {
             directory: path.join(__dirname, 'public'),
         },
         port: 7070,
-        historyApiFallback: true,
+        historyApiFallback: {
+            index: '/',
+        },
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',

@@ -1,1 +1,1 @@
-export const token = ''
+export const token = process.env.TOKEN

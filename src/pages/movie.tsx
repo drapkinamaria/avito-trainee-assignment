@@ -36,7 +36,7 @@ export const Movie = () => {
         }
     }, [error, id]);
 
-    if (loading) return <div className="alert alert-info">Loading...</div>;
+    if (loading) return <div className="alert alert-info">Загрузка...</div>;
     if (error) return <div className="alert alert-danger">{error}</div>;
     if (!movie) return <div className="alert alert-warning">Movie not found.</div>;
 
@@ -51,15 +51,15 @@ export const Movie = () => {
     return (
         <div className="container mt-3">
             <Link to={AppRoute.Root} className="btn btn-primary mb-3">Назад</Link>
-            <h1>{movie.name}</h1>
+            <h1>{movie.name || movie.alternativeName}</h1>
             <p>{movie.shortDescription}</p>
-            <div>Оценка: {movie.rating.imdb}</div>
+            <div>Оценка: {movie.rating.kp || 'Нет информации'}</div>
             <h3>Список актеров</h3>
             <div>
                 {movie.persons && movie.persons.length > 0 ? (
                     <ul className="list-group">
                         {currentActors.map((person) => (
-                            <li key={person.id} className="list-group-item">{person.name}</li>
+                            person.name && <li key={person.id} className="list-group-item">{person.name}</li>
                         ))}
                     </ul>
                 ) : (
@@ -75,7 +75,16 @@ export const Movie = () => {
             )}
             <div>{movie.isSeries ? <EpisodesList movieId={id} /> : ''}</div>
             <ReviewsList movieId={id}></ReviewsList>
-            <img src={movie.poster.url} alt={movie.name} className="img-fluid my-3"></img>
+            {
+                movie.poster.url && (
+                    <img
+                        src={movie.poster.url}
+                        alt={movie.name || movie.alternativeName}
+                        className="img-fluid my-3"
+                        style={{ maxWidth: '300px', height: 'auto' }}
+                    />
+                )
+            }
             <div className="mt-3">
                 {similarMoviesPosters.length > 0 ? (
                     <ImageCarousel imagesUrlId={similarMoviesPosters} />
